@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Weekly Returns</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f4f8;
+        }
+        .container {
+            text-align: center;
+            max-width: 500px;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            border: none;
+            border-radius: 5px;
+            background-color: #4CAF50;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .output {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Generate Random Weekly Returns</h2>
+    <button onclick="generateReturns()">Generate</button>
+    <div class="output" id="output"></div>
+</div>
+
+<script>
+    function generateReturns() {
+        const meanReturn = 3.5;  // 평균 수익률 (%)
+        const stdDev = 6;        // 표준편차 (%)
+        const weeks = 52;        // 1년 = 52주
+        const returns = [];
+
+        for (let i = 0; i < weeks; i++) {
+            // 정규분포를 이용한 수익률 생성
+            const randomReturn = Math.round(meanReturn + stdDev * (Math.random() * 2 - 1));
+            returns.push(randomReturn);
+        }
+
+        document.getElementById("output").innerHTML = 
+            `Generated weekly returns for a year: <br>${returns.join(', ')}`;
+    }
+</script>
+
+</body>
+</html>
