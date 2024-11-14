@@ -5,77 +5,182 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Random Weekly Returns</title>
     <style>
-        /* 스타일 초기화 */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        /* 기본 테마 설정 */
+        :root {
+            --bg-color: #fff;
+            --text-color: #000;
+            --container-bg-color: #f9f9f9;
+            --button-bg-color: #555;
+            --button-hover-bg-color: #333;
+            --highlight-color: #4CAF50;
+            --zero-line-color: #ff0000;
         }
+
+        /* 다크 모드 테마 설정 */
+        .dark-mode {
+            --bg-color: #000;
+            --text-color: #fff;
+            --container-bg-color: #333;
+            --button-bg-color: #777;
+            --button-hover-bg-color: #555;
+        }
+
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Noto Sans KR', sans-serif;
             display: flex;
             align-items: center;
             justify-content: center;
             height: 100vh;
             margin: 0;
-            background-color: #1a1a1a;
-            color: #f0f4f8;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
+
         .container {
             text-align: center;
-            max-width: 400px;
+            max-width: 500px;
             padding: 30px;
-            background: #333;
+            background: var(--container-bg-color);
             border-radius: 12px;
             box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+            transition: background 0.3s ease;
         }
+
         .container h2 {
             font-size: 24px;
             margin-bottom: 20px;
-            color: #ffcc00;
         }
+
         button {
             margin-top: 20px;
             padding: 12px 24px;
             font-size: 16px;
             border: none;
             border-radius: 8px;
-            background-color: #ffcc00;
-            color: #333;
+            background-color: var(--button-bg-color);
+            color: #fff;
             font-weight: bold;
             cursor: pointer;
-            transition: background 0.3s ease;
+            transition: background-color 0.3s ease;
         }
+
         button:hover {
-            background-color: #e6b800;
+            background-color: var(--button-hover-bg-color);
         }
+
         .output {
             margin-top: 20px;
-            font-size: 24px;
-            color: #ffffff;
+            font-size: 36px;
             font-weight: bold;
+            transition: font-size 0.3s ease;
+        }
+
+        /* 그래프 스타일 */
+        .graph {
+            margin-top: 20px;
+            height: 30px;
+            width: 100%;
+            background-color: #e0e0e0;
+            position: relative;
+            border-radius: 8px;
+        }
+
+        .marker {
+            height: 100%;
+            width: 2px;
+            background-color: var(--highlight-color);
+            position: absolute;
+            top: 0;
+        }
+
+        /* 0% 기준선 스타일 */
+        .zero-line {
+            position: absolute;
+            height: 100%;
+            width: 2px;
+            background-color: var(--zero-line-color);
+            left: 50%; /* 중앙 위치 */
+        }
+
+        /* 다크 모드 토글 */
+        .toggle-switch {
+            position: fixed;
+            top: 1em;
+            right: 1em;
+            z-index: 1001;
+        }
+
+        .toggle-switch input[type="checkbox"] {
+            display: none;
+        }
+
+        .toggle-switch label {
+            display: block;
+            width: 50px;
+            height: 25px;
+            background-color: #ccc;
+            border-radius: 25px;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .toggle-switch label::after {
+            content: '';
+            width: 21px;
+            height: 21px;
+            background-color: #fff;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.3s ease;
+        }
+
+        .toggle-switch input[type="checkbox"]:checked + label {
+            background-color: #232323;
+        }
+
+        .toggle-switch input[type="checkbox"]:checked + label::after {
+            transform: translateX(25px);
         }
     </style>
 </head>
 <body>
 
+<div class="toggle-switch">
+    <input type="checkbox" id="toggle-dark-mode" onchange="toggleDarkMode()">
+    <label for="toggle-dark-mode"></label>
+</div>
+
 <div class="container">
-    <h2>Generate Random Weekly Return</h2>
-    <button onclick="generateReturn()">Generate</button>
-    <div class="output" id="output">Click the button to generate a return</div>
+    <h2>주간 수익률</h2>
+    <button onclick="generateReturn()">만들기</button>
+    <div class="output" id="output"></div>
+    <div class="graph">
+        <div class="zero-line"></div>
+        <div class="marker" id="marker" style="left: 50%;"></div>
+    </div>
 </div>
 
 <script>
     function generateReturn() {
         const meanReturn = 3.5;  // 평균 수익률 (%)
         const stdDev = 6;        // 표준편차 (%)
-
-        // 정규분포를 이용한 하나의 수익률 생성
         const randomReturn = Math.round(meanReturn + stdDev * (Math.random() * 2 - 1));
         
-        // 결과 표시
-        document.getElementById("output").innerHTML = 
-            `Weekly Return: ${randomReturn}%`;
+        document.getElementById("output").innerHTML = `Weekly Return: ${randomReturn}%`;
+
+        // 그래프에서 위치 계산
+        const minReturn = -20;  // 최소 범위 -20%
+        const maxReturn = 20;   // 최대 범위 +20%
+        const position = ((randomReturn - minReturn) / (maxReturn - minReturn)) * 100;
+        document.getElementById("marker").style.left = `${position}%`;
+    }
+
+    function toggleDarkMode() {
+        document.body.classList.toggle("dark-mode");
     }
 </script>
 
